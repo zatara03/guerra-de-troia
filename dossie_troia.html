@@ -1,0 +1,530 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dossiê Interativo: A Guerra de Troia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        heading: ['Cinzel', 'serif'],
+                        body: ['Lora', 'serif'],
+                    },
+                    colors: {
+                        'parchment': '#fdfbf7',
+                        'terracotta': '#c84b31',
+                        'gold': '#d4af37',
+                        'olive': '#556b2f',
+                        'dark': '#2d2a26',
+                        'muted': '#8c8273'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #fdfbf7; color: #2d2a26; }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container { height: 400px; }
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -5px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #c84b31;
+        }
+        .glass-panel {
+            background: rgba(253, 251, 247, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(140, 130, 115, 0.2);
+        }
+        .nav-link.active { border-bottom: 2px solid #c84b31; color: #c84b31; }
+        .tab-btn.active { background-color: #c84b31; color: white; border-color: #c84b31; }
+        .modal { transition: opacity 0.3s ease; }
+    </style>
+</head>
+<body class="font-body antialiased selection:bg-terracotta selection:text-white pb-20">
+
+    <!-- Chosen Palette: Warm Antiquity (Parchment, Terracotta, Olive, Soft Gold, Dark Ink) -->
+    <!-- Application Structure Plan: The SPA uses a long-scroll "Dossier" format with a sticky navigation bar for easy access. The structure begins with the user's specific, localized queries (Hellenic Origins & Thrace/Petrota) to immediately satisfy custom requests, before flowing chronologically and thematically into the Trojan War. Interactive elements include a Chart.js visualization for troop sizes, clickable timeline events, filterable divine intervention cards, and modal deep-dives for character studies (Cassandra, Achilles, Amazons). This non-linear exploration allows users to read as a narrative or jump to specific academic interests. -->
+    <!-- Visualization & Content Choices: 
+        1. Context & Origins: Text and logical layout to explain complex historical migrations. 
+        2. Catalogue of Ships: Bar chart (Chart.js) to show quantitative data of Greek forces, giving scale to the myth. 
+        3. Timeline: Vertical HTML/CSS timeline with JS expandable details for chronological clarity. 
+        4. Gods: Interactive toggle buttons to filter Greek vs Trojan gods, showing relational dynamics. 
+        5. Deep Dives (Amazons, Cassandra, Achilles): JS Modals to contain extensive qualitative analysis without cluttering the main view. 
+        6. Myth vs History: Side-by-side comparative layout for academic distinction. NO SVG or Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <nav class="fixed w-full z-50 glass-panel shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-heading font-bold text-xl tracking-wider text-dark">ILIAS 🏛️</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-6 font-heading text-sm font-semibold">
+                    <a href="#origens" class="nav-link text-muted hover:text-terracotta transition-colors py-2">Origens</a>
+                    <a href="#guerra" class="nav-link text-muted hover:text-terracotta transition-colors py-2">A Guerra</a>
+                    <a href="#deuses" class="nav-link text-muted hover:text-terracotta transition-colors py-2">Os Deuses</a>
+                    <a href="#personagens" class="nav-link text-muted hover:text-terracotta transition-colors py-2">Dossiês</a>
+                    <a href="#historia" class="nav-link text-muted hover:text-terracotta transition-colors py-2">Mito vs História</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="pt-32 pb-16 px-4 text-center border-b border-muted/20">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="font-heading text-5xl md:text-6xl font-bold text-dark mb-6">A Guerra de Troia</h1>
+            <p class="text-xl md:text-2xl text-muted italic mb-8">Um estudo completo sobre o maior conflito da antiguidade clássica, separando a névoa do mito das fundações da história.</p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
+
+        <section id="origens" class="scroll-mt-24">
+            <div class="mb-12">
+                <h2 class="font-heading text-3xl font-bold text-dark mb-4 border-b-2 border-gold inline-block pb-2">Preâmbulo: As Origens Helênicas e Mitos da Trácia</h2>
+                <p class="text-lg leading-relaxed mt-4">Antes de adentrarmos nas muralhas de Ílion, é preciso compreender as origens do povo que a sitiou e os mitos obscuros das fronteiras gregas, como solicitado em sua investigação.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-12">
+                <div class="bg-white p-8 rounded-lg shadow-sm border border-muted/20">
+                    <div class="text-4xl mb-4 text-gold">🏺</div>
+                    <h3 class="font-heading text-2xl font-bold mb-4">A Origem da Civilização Helênica</h3>
+                    <p class="mb-4 text-sm leading-relaxed">A "civilização helênica emergente" não surgiu subitamente. Historicamente, ela é o resultado de uma fusão milenar (aprox. 2000-1200 a.C.).</p>
+                    <ul class="list-disc pl-5 space-y-2 text-sm">
+                        <li><strong>Invasões Indo-Europeias:</strong> Tribos nômades (Aqueus, Jônios, Eólios e posteriormente Dórios) desceram dos Bálcãs para a península grega.</li>
+                        <li><strong>Os Pelasgos:</strong> Estas tribos encontraram uma população autóctone, pré-grega, chamada vagamente de "Pelasgos" pelos antigos.</li>
+                        <li><strong>A Síntese Micênica:</strong> O contato com a sofisticada civilização Minoica (de Creta) transformou esses guerreiros tribais na <strong>Civilização Micênica</strong>. Foram os reis micênicos (como Agamêmnon) que inspiraram as lendas dos heróis de Homero. O conflito com Troia reflete o expansionismo dessa cultura no Mar Egeu.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-8 rounded-lg shadow-sm border border-muted/20">
+                    <div class="text-4xl mb-4 text-terracotta">🌊</div>
+                    <h3 class="font-heading text-2xl font-bold mb-4">Mitos de Petrota Beach (Trácia)</h3>
+                    <p class="mb-4 text-sm leading-relaxed">A região da praia de Petrota fica na <strong>Trácia</strong> (nordeste da Grécia moderna). Para os gregos antigos, a Trácia era uma terra selvagem, marginal e mágica, lar de mitos obscuros e violentos.</p>
+                    <ul class="list-disc pl-5 space-y-2 text-sm">
+                        <li><strong>A Pátria de Ares:</strong> O deus da guerra não era muito amado na Grécia continental, e acreditava-se que sua morada original era a bárbara e belicosa Trácia.</li>
+                        <li><strong>As Éguas Antropófagas:</strong> O mito de Diomedes da Trácia (um rei, não o herói grego), que possuía cavalos que se alimentavam de carne humana, domados por Hércules.</li>
+                        <li><strong>Orfeu:</strong> O maior músico da mitologia era trácio. Sua religião misteriosa (Orfismo) contrastava com os deuses olímpicos tradicionais.</li>
+                        <li><strong>Conexão com Troia - Rei Reso:</strong> Na <em>Ilíada</em>, o rei trácio Reso chega para ajudar Troia com cavalos magníficos, mas é assassinado em um ataque noturno por Odisseu e Diomedes.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="guerra" class="scroll-mt-24">
+            <div class="mb-12">
+                <h2 class="font-heading text-3xl font-bold text-dark mb-4 border-b-2 border-terracotta inline-block pb-2">O Estopim e as Forças</h2>
+                <p class="text-lg leading-relaxed mt-4">A guerra que queimou as torres imortais de Ílion não começou com exércitos, mas com uma maçã e um concurso de beleza divina.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <div class="md:col-span-1 bg-parchment p-6 border-l-4 border-gold">
+                    <h3 class="font-heading text-xl font-bold mb-3">O Julgamento de Páris</h3>
+                    <p class="text-sm">No casamento de Peleu e Tétis, a deusa da discórdia, Éris, lançou uma maçã dourada "Para a mais bela". Hera, Atena e Afrodite reivindicaram o prêmio. Zeus encarregou Páris, príncipe troiano, de julgar.</p>
+                    <p class="text-sm mt-2">Hera ofereceu poder, Atena ofereceu sabedoria em batalha, e Afrodite ofereceu o amor da mulher mais bela do mundo: <strong>Helena de Esparta</strong>. Páris escolheu Afrodite, raptou Helena (já casada com Menelau), e desencadeou a fúria grega.</p>
+                </div>
+                <div class="md:col-span-2">
+                    <h3 class="font-heading text-xl font-bold mb-4 text-center">O Catálogo das Naus: Principais Lideranças Gregas</h3>
+                    <p class="text-sm text-center text-muted mb-4">Estimativa mitológica de navios levados a Troia, baseada no Livro II da Ilíada (cada navio abrigava cerca de 50-120 homens).</p>
+                    <div class="chart-container">
+                        <canvas id="shipsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="font-heading text-2xl font-bold mb-6 text-center">Linha do Tempo Resumida (10 Anos de Conflito)</h3>
+            <div class="relative border-l border-terracotta ml-4 md:ml-12 space-y-8 pb-4">
+                
+                <div class="relative pl-8 timeline-item cursor-pointer group" onclick="toggleTimeline('tl1')">
+                    <h4 class="font-bold text-lg text-terracotta group-hover:text-dark transition-colors">O Encontro em Áulis e o Sacrifício</h4>
+                    <div id="tl1" class="hidden mt-2 text-sm text-gray-700 bg-white p-4 rounded border border-muted/20">
+                        A frota grega se reúne, mas ventos contrários impedem a partida. O vidente Calcas afirma que Ártemis exige um sacrifício: Ifigênia, filha do comandante Agamêmnon. Após o sacrifício (ou substituição divina da jovem por um cervo), a frota parte.
+                    </div>
+                </div>
+
+                <div class="relative pl-8 timeline-item cursor-pointer group" onclick="toggleTimeline('tl2')">
+                    <h4 class="font-bold text-lg text-terracotta group-hover:text-dark transition-colors">Nove Anos de Cerco</h4>
+                    <div id="tl2" class="hidden mt-2 text-sm text-gray-700 bg-white p-4 rounded border border-muted/20">
+                        Troia é inexpugnável. Os gregos passam quase uma década saqueando cidades vizinhas na Ásia Menor, destruindo aliados de Troia, sequestrando mulheres (como Criseida e Briseida) e acumulando riquezas.
+                    </div>
+                </div>
+
+                <div class="relative pl-8 timeline-item cursor-pointer group" onclick="toggleTimeline('tl3')">
+                    <h4 class="font-bold text-lg text-terracotta group-hover:text-dark transition-colors">O Décimo Ano: A Fúria de Aquiles (A Ilíada)</h4>
+                    <div id="tl3" class="hidden mt-2 text-sm text-gray-700 bg-white p-4 rounded border border-muted/20">
+                        Agamêmnon ofende Aquiles, que se retira da batalha. Os troianos ganham terreno sob a liderança de Heitor. Pátroclo luta com a armadura de Aquiles e é morto por Heitor. Aquiles retorna em fúria cega, massacra troianos e mata Heitor, profanando seu corpo.
+                    </div>
+                </div>
+
+                <div class="relative pl-8 timeline-item cursor-pointer group" onclick="toggleTimeline('tl4')">
+                    <h4 class="font-bold text-lg text-terracotta group-hover:text-dark transition-colors">Eventos Pós-Ilíada (Ciclo Épico)</h4>
+                    <div id="tl4" class="hidden mt-2 text-sm text-gray-700 bg-white p-4 rounded border border-muted/20">
+                        Chegada das Amazonas (Pentesileia) e de Mêmnon da Etiópia para ajudar Troia. Aquiles mata ambos, mas é posteriormente morto por uma flecha de Páris, guiada por Apolo, em seu calcanhar.
+                    </div>
+                </div>
+
+                <div class="relative pl-8 timeline-item cursor-pointer group" onclick="toggleTimeline('tl5')">
+                    <h4 class="font-bold text-lg text-terracotta group-hover:text-dark transition-colors">O Cavalo de Madeira e a Queda</h4>
+                    <div id="tl5" class="hidden mt-2 text-sm text-gray-700 bg-white p-4 rounded border border-muted/20">
+                        Odisseu arquiteta o Cavalo de Troia. Os gregos fingem partir. Os troianos, ignorando os avisos de Cassandra e Laocoonte, colocam o cavalo na cidade. À noite, os gregos saem, abrem os portões e Troia é destruída, seus homens mortos e mulheres escravizadas.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="deuses" class="scroll-mt-24 bg-dark text-parchment p-8 rounded-xl">
+            <div class="text-center mb-10">
+                <h2 class="font-heading text-3xl font-bold mb-4 text-gold">A Intervenção Divina no Tabuleiro Mortal</h2>
+                <p class="text-lg max-w-3xl mx-auto opacity-90">A Guerra de Troia foi tanto um conflito humano quanto celestial. Os deuses desciam ao campo de batalha, influenciavam mentes e alteravam o destino ativamente.</p>
+            </div>
+
+            <div class="flex justify-center space-x-4 mb-8">
+                <button onclick="filterGods('greeks')" id="btn-greeks" class="tab-btn active px-6 py-2 border rounded-full font-bold transition-colors">Deuses Pró-Gregos</button>
+                <button onclick="filterGods('trojans')" id="btn-trojans" class="px-6 py-2 border border-muted text-muted hover:border-gold hover:text-gold rounded-full font-bold transition-colors">Deuses Pró-Troianos</button>
+            </div>
+
+            <div id="gods-greeks" class="grid md:grid-cols-3 gap-6 transition-opacity duration-300">
+                <div class="border border-gold/30 p-5 rounded bg-white/5">
+                    <h4 class="font-heading font-bold text-xl text-gold mb-2">Hera</h4>
+                    <p class="text-sm opacity-80">Rancorosa pela perda no Julgamento de Páris. Manipulou Zeus para garantir que os troianos sofressem o máximo possível.</p>
+                </div>
+                <div class="border border-gold/30 p-5 rounded bg-white/5">
+                    <h4 class="font-heading font-bold text-xl text-gold mb-2">Atena</h4>
+                    <p class="text-sm opacity-80">Também rejeitada por Páris. Protegia intensamente heróis como Odisseu e Diomedes. Ajudou Aquiles a matar Heitor, enganando o príncipe troiano assumindo a forma de seu irmão.</p>
+                </div>
+                <div class="border border-gold/30 p-5 rounded bg-white/5">
+                    <h4 class="font-heading font-bold text-xl text-gold mb-2">Poseidon</h4>
+                    <p class="text-sm opacity-80">Odioso contra Troia porque o antigo rei Laomedonte se recusou a pagá-lo pela construção das muralhas. Interveio fisicamente no campo para salvar heróis aqueus.</p>
+                </div>
+            </div>
+
+            <div id="gods-trojans" class="hidden grid md:grid-cols-3 gap-6 transition-opacity duration-300">
+                <div class="border border-terracotta/50 p-5 rounded bg-white/5">
+                    <h4 class="font-heading font-bold text-xl text-terracotta mb-2">Afrodite</h4>
+                    <p class="text-sm opacity-80">Protetora de Páris. Interveio ativamente para salvá-lo de ser morto por Menelau em um duelo, envolvendo-o em névoa e transportando-o para seu quarto.</p>
+                </div>
+                <div class="border border-terracotta/50 p-5 rounded bg-white/5">
+                    <h4 class="font-heading font-bold text-xl text-terracotta mb-2">Apolo</h4>
+                    <p class="text-sm opacity-80">O arquiteto da desgraça grega inicial (enviou a praga). Desarmou Pátroclo em batalha, permitindo que Heitor o matasse. Guiou a flecha de Páris no calcanhar de Aquiles.</p>
+                </div>
+                <div class="border border-terracotta/50 p-5 rounded bg-white/5">
+                    <h4 class="font-heading font-bold text-xl text-terracotta mb-2">Ares</h4>
+                    <p class="text-sm opacity-80">Influenciado por Afrodite, lutou ao lado dos troianos manchado de sangue, até ser ferido pelo herói mortal Diomedes (com a ajuda de Atena) e fugir para o Olimpo uivando.</p>
+                </div>
+            </div>
+            
+            <div class="mt-8 text-center text-sm opacity-70 italic border-t border-muted/30 pt-4">
+                "Zeus, o moderador, manteve-se frequentemente neutro ou pesou os destinos na balança dourada, embora a morte de seu filho Sarpedão (troiano) tenha lhe causado imensa dor."
+            </div>
+        </section>
+
+        <section id="personagens" class="scroll-mt-24">
+            <div class="mb-10 text-center">
+                <h2 class="font-heading text-3xl font-bold text-dark mb-4">Dossiês de Personagens</h2>
+                <p class="text-lg text-muted">A guerra foi forjada pelas paixões, maldições e tragédias de indivíduos extraordinários. Clique para expandir os registros.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div onclick="openModal('modal-amazonas')" class="cursor-pointer group relative overflow-hidden rounded-xl border border-muted/20 bg-white hover:shadow-lg transition-all">
+                    <div class="h-32 bg-gradient-to-r from-olive to-dark flex items-center justify-center text-4xl">🏹</div>
+                    <div class="p-6">
+                        <h3 class="font-heading font-bold text-xl mb-2 group-hover:text-terracotta transition-colors">A Participação das Amazonas</h3>
+                        <p class="text-sm text-muted">A Rainha Pentesileia, o embate com Aquiles e a tragédia da guerreira.</p>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div onclick="openModal('modal-cassandra')" class="cursor-pointer group relative overflow-hidden rounded-xl border border-muted/20 bg-white hover:shadow-lg transition-all">
+                    <div class="h-32 bg-gradient-to-r from-terracotta to-dark flex items-center justify-center text-4xl">👁️</div>
+                    <div class="p-6">
+                        <h3 class="font-heading font-bold text-xl mb-2 group-hover:text-terracotta transition-colors">Cassandra</h3>
+                        <p class="text-sm text-muted">O dom da profecia, a maldição de Apolo e o fardo de ver a queda de Troia.</p>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div onclick="openModal('modal-aquiles')" class="cursor-pointer group relative overflow-hidden rounded-xl border border-muted/20 bg-white hover:shadow-lg transition-all">
+                    <div class="h-32 bg-gradient-to-r from-gold to-terracotta flex items-center justify-center text-4xl">⚔️</div>
+                    <div class="p-6">
+                        <h3 class="font-heading font-bold text-xl mb-2 group-hover:text-terracotta transition-colors">Aquiles e Pátroclo</h3>
+                        <p class="text-sm text-muted">A natureza da relação, fúria e o impacto que alterou o curso da guerra.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="historia" class="scroll-mt-24 pb-12">
+            <div class="mb-12">
+                <h2 class="font-heading text-3xl font-bold text-dark mb-4 border-b-2 border-olive inline-block pb-2">Fontes, Mito e Arqueologia</h2>
+                <p class="text-lg leading-relaxed mt-4">A Ilíada não é um livro de história, mas também não é ficção pura. Como os especialistas separam a poesia da realidade?</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-10">
+                <div>
+                    <h3 class="font-heading text-2xl font-bold mb-6 text-olive">A Tradição Literária</h3>
+                    <div class="space-y-6">
+                        <div class="bg-white p-5 rounded border border-muted/20 shadow-sm">
+                            <h4 class="font-bold text-lg mb-2">Homero (A Ilíada e a Odisseia)</h4>
+                            <p class="text-sm">Escritas no séc. VIII a.C. (séculos após a guerra). A Ilíada relata apenas 51 dias do décimo ano da guerra. Foco na psicologia heróica e no "Kléos" (glória imortal).</p>
+                        </div>
+                        <div class="bg-white p-5 rounded border border-muted/20 shadow-sm">
+                            <h4 class="font-bold text-lg mb-2">Tragédias Gregas (Séc. V a.C.)</h4>
+                            <p class="text-sm">Autores como Eurípides (<em>As Troianas</em>, <em>Hécuba</em>) e Ésquilo (<em>A Oresteia</em>). Focam no custo humano, no sofrimento das mulheres escravizadas e no destino macabro dos heróis gregos ao retornarem.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded border border-muted/20 shadow-sm">
+                            <h4 class="font-bold text-lg mb-2">Autores Posteriores (Virgílio, Apolodoro)</h4>
+                            <p class="text-sm">A <em>Eneida</em> de Virgílio (romana) glorifica os troianos, mostrando Eneias fugindo para fundar Roma. Odalodoro compilou os mitos. Muitas lendas do "Cavalo de Troia" vêm dessas fontes tardias, não de Homero.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-olive text-white p-8 rounded-xl">
+                    <h3 class="font-heading text-2xl font-bold mb-6">Mito vs. Base Histórica</h3>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-bold text-xl mb-2 border-b border-white/30 pb-1">O que é Mitologia?</h4>
+                        <ul class="list-disc pl-5 space-y-2 text-sm opacity-90">
+                            <li>O Julgamento de Páris e a maçã dourada.</li>
+                            <li>A intervenção física dos Deuses (Apolo parando flechas, rios lutando contra Aquiles).</li>
+                            <li>A invulnerabilidade mágica de Aquiles.</li>
+                            <li>Monstros e exércitos inteiros de Amazonas.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-xl mb-2 border-b border-white/30 pb-1">O que tem Base Arqueológica?</h4>
+                        <ul class="list-disc pl-5 space-y-3 text-sm opacity-90">
+                            <li><strong>As Escavações:</strong> No séc. XIX, Heinrich Schliemann escavou a colina de Hisarlik, na Turquia. Ele encontrou ruínas de várias cidades sobrepostas.</li>
+                            <li><strong>Troia VIIa:</strong> A camada arqueológica conhecida como Troia VIIa mostra evidências claras de destruição por incêndio e cerco humano por volta de 1190 a.C., coincidindo com a datação tradicional do mito.</li>
+                            <li><strong>Textos Hititas:</strong> Arquivos do Império Hitita (vizinhos de Troia) mencionam uma cidade chamada <em>Wilusa</em> (Ilios) e um rei chamado <em>Alaksandu</em> (Páris Alexandre). Também mencionam conflitos com um povo guerreiro do mar chamado <em>Ahhiyawa</em> (Aqueus/Gregos).</li>
+                            <li><strong>Conclusão Acadêmica:</strong> Uma ou várias guerras comerciais/territoriais reais ocorreram na Idade do Bronze entre confederações gregas micênicas e reinos da Ásia Menor. Esses conflitos foram romantizados ao longo de séculos de tradição oral, gerando a epopeia poética que conhecemos.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modals (Hidden by default) -->
+    <!-- Modal Amazonas -->
+    <div id="modal-amazonas" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4 modal opacity-0">
+        <div class="bg-parchment w-full max-w-2xl rounded-xl p-8 max-h-[90vh] overflow-y-auto relative">
+            <button onclick="closeModal('modal-amazonas')" class="absolute top-4 right-4 text-2xl text-dark hover:text-terracotta">✕</button>
+            <h2 class="font-heading text-3xl font-bold mb-4 text-olive">As Amazonas e Pentesileia</h2>
+            <div class="space-y-4 text-sm leading-relaxed">
+                <p><strong>Origem Mitológica:</strong> As Amazonas eram uma mítica tribo de guerreiras que excluíam os homens de sua sociedade (exceto para procriação). Localizavam-se geograficamente nas bordas do mundo civilizado grego, frequentemente associadas à região do <strong>Ponto Euxino (Mar Negro)</strong>, perto do rio Termodonte, na cidade de Temiscira (atual Turquia septentrional).</p>
+                <p><strong>A Rainha na Guerra:</strong> <strong>Pentesileia</strong> era uma das rainhas amazonas. Após matar acidentalmente sua irmã Hipólita em uma caçada, ela foi purificada pelo rei Príamo de Troia. Como dívida de gratidão (e buscando glória ou morte em batalha para expiar sua culpa), ela chegou a Troia no décimo ano, após a morte de Heitor.</p>
+                <p><strong>O Encontro com Aquiles:</strong> A participação dela é detalhada no poema épico <em>Aetiopis</em> (perdido, mas resumido por outros) e por autores como Quinto de Esmirna. Pentesileia lutou bravamente e matou muitos gregos. Eventualmente, ela confrontou Aquiles.</p>
+                <div class="bg-muted/10 p-4 border-l-4 border-olive italic">
+                    "Aquiles trespassou seu peito com a lança. Mas quando ele removeu o capacete dela e viu seu rosto no momento da morte, a lenda diz que ele foi tomado por um luto profundo e apaixonou-se por ela postumamente."
+                </div>
+                <p><strong>Curiosidade:</strong> O soldado grego Tersites zombou do luto de Aquiles por uma inimiga. Em resposta, Aquiles o matou com um único soco. A figura da Amazona representava para os gregos a inversão da ordem natural (o mundo "bárbaro"), e seu subjugamento pelo herói restaurava a ordem patriarcal helênica.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Cassandra -->
+    <div id="modal-cassandra" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4 modal opacity-0">
+        <div class="bg-parchment w-full max-w-2xl rounded-xl p-8 max-h-[90vh] overflow-y-auto relative">
+            <button onclick="closeModal('modal-cassandra')" class="absolute top-4 right-4 text-2xl text-dark hover:text-terracotta">✕</button>
+            <h2 class="font-heading text-3xl font-bold mb-4 text-terracotta">A Maldição de Cassandra</h2>
+            <div class="space-y-4 text-sm leading-relaxed">
+                <p><strong>Origem e Família:</strong> Cassandra era princesa de Troia, filha do Rei Príamo e da Rainha Hécuba, irmã de Heitor e Páris. Conhecida por sua beleza deslumbrante.</p>
+                <p><strong>O Dom e a Maldição:</strong> O deus Apolo apaixonou-se por ela e concedeu-lhe o dom da profecia em troca de favores sexuais. Cassandra aceitou o dom, mas recusou-se a entregar-se ao deus. Incapaz de retirar um dom divino, Apolo cuspiu em sua boca, amaldiçoando-a: <em>ela sempre veria o futuro com clareza, mas ninguém jamais acreditaria em suas palavras.</em></p>
+                <p><strong>Profecias durante a Guerra:</strong></p>
+                <ul class="list-disc pl-5">
+                    <li>Previu que a viagem de Páris a Esparta traria a destruição.</li>
+                    <li>Reconheceu o perigo do Cavalo de Madeira e implorou, chorando e gritando, para que queimassem a estrutura, mas foi considerada louca pelos próprios concidadãos.</li>
+                </ul>
+                <p><strong>Destino Final:</strong> Durante o saque de Troia, ela buscou refúgio no templo de Atena. O guerreiro grego Ájax, o Menor, arrastou-a do altar, violando a sacralidade do templo (um ato que enfureceu Atena e causou a ruína da frota grega na volta). Cassandra foi entregue como escrava e concubina ao rei Agamêmnon.</p>
+                <p><strong>Tragédia:</strong> Ao chegar em Micenas, ela previu o próprio assassinato e o de Agamêmnon nas mãos da esposa dele, Clitemnestra. Mais uma vez ignorada, ela entrou no palácio aceitando seu fim brutal (narrado magistralmente na peça <em>Agamêmnon</em> de Ésquilo).</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Aquiles e Patroclo -->
+    <div id="modal-aquiles" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4 modal opacity-0">
+        <div class="bg-parchment w-full max-w-2xl rounded-xl p-8 max-h-[90vh] overflow-y-auto relative">
+            <button onclick="closeModal('modal-aquiles')" class="absolute top-4 right-4 text-2xl text-dark hover:text-terracotta">✕</button>
+            <h2 class="font-heading text-3xl font-bold mb-4 text-gold">Aquiles e Pátroclo: Laços de Sangue e Alma</h2>
+            <div class="space-y-4 text-sm leading-relaxed">
+                <p><strong>A Natureza da Relação:</strong> O vínculo entre Aquiles (o maior guerreiro grego) e Pátroclo é o motor emocional da Ilíada. Na obra de Homero, Pátroclo é descrito como o <em>therapôn</em> (companheiro de armas/escudeiro) de Aquiles. Homero nunca os define explicitamente como amantes sexuais, focando na intensidade do <em>philia</em> (amor fraternal/amizade leal).</p>
+                <p><strong>Interpretações Acadêmicas e Clássicas:</strong></p>
+                <ul class="list-disc pl-5">
+                    <li><strong>Atenas Clássica (Séc. V a.C.):</strong> Para gregos posteriores como Platão (em <em>O Banquete</em>) e Ésquilo, era óbvio que eles eram um casal pederástico (uma relação romântica entre homens comum na antiguidade). Debatia-se apenas quem era o <em>erastes</em> (o mais velho/protetor) e quem era o <em>eromenos</em> (o amado).</li>
+                    <li><strong>Visão Moderna:</strong> A academia moderna tende a ver a tentativa de categorizá-los sob rótulos modernos de orientação sexual como anacrônica. A relação deles transcende categorias simples: é um vínculo heroico, de alma, onde a identidade de um se funde com a do outro.</li>
+                </ul>
+                <div class="bg-muted/10 p-4 border-l-4 border-gold italic">
+                    Quando Pátroclo morre vestindo a armadura de Aquiles, Aquiles não perde apenas um amigo; ele perde uma parte de si mesmo. Sua dor é animalesca: ele rasga as roupas, joga cinzas no rosto e recusa-se a comer.
+                </div>
+                <p><strong>O Impacto no Desfecho:</strong> A morte de Pátroclo é a virada da guerra. Aquiles, que havia abandonado a luta por orgulho ferido contra Agamêmnon, abandona toda sua humanidade por vingança. Ele retorna em uma fúria divina (<em>ménis</em>), entope o rio Escamandro com cadáveres e mata Heitor, selando o destino de Troia e o seu próprio.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-center py-8 text-sm text-parchment/60">
+        <p>Dossiê Interativo: História Antiga & Mitologia Grega.</p>
+    </footer>
+
+    <script>
+        // Navigation Active State
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 150) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').substring(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Gods Filter
+        function filterGods(side) {
+            const btnGreeks = document.getElementById('btn-greeks');
+            const btnTrojans = document.getElementById('btn-trojans');
+            const gridGreeks = document.getElementById('gods-greeks');
+            const gridTrojans = document.getElementById('gods-trojans');
+
+            if (side === 'greeks') {
+                btnGreeks.className = 'tab-btn active px-6 py-2 border rounded-full font-bold transition-colors';
+                btnTrojans.className = 'px-6 py-2 border border-muted text-muted hover:border-gold hover:text-gold rounded-full font-bold transition-colors';
+                gridGreeks.classList.remove('hidden');
+                gridTrojans.classList.add('hidden');
+            } else {
+                btnTrojans.className = 'tab-btn active px-6 py-2 border border-terracotta bg-terracotta text-white rounded-full font-bold transition-colors';
+                btnGreeks.className = 'px-6 py-2 border border-muted text-muted hover:border-gold hover:text-gold rounded-full font-bold transition-colors';
+                gridTrojans.classList.remove('hidden');
+                gridGreeks.classList.add('hidden');
+            }
+        }
+
+        // Timeline Toggle
+        function toggleTimeline(id) {
+            const el = document.getElementById(id);
+            if(el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        }
+
+        // Modal Controls
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.remove('hidden');
+            // small delay to allow display block to apply before opacity transition
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+            }, 10);
+            document.body.style.overflow = 'hidden'; // Prevent scrolling background
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300); // match transition duration
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                closeModal(event.target.id);
+            }
+        }
+
+        // Chart.js Setup: Catalogue of Ships
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = document.getElementById('shipsChart').getContext('2d');
+            
+            // Data based on Homer's Iliad (approximate numbers of prominent leaders)
+            const leaders = ['Agamêmnon', 'Nestor', 'Diomedes', 'Idomeneu', 'Menelau', 'Aquiles', 'Odisseu'];
+            const ships = [100, 90, 80, 80, 60, 50, 12];
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: leaders,
+                    datasets: [{
+                        label: 'Número de Navios (Catálogo das Naus)',
+                        data: ships,
+                        backgroundColor: '#c84b31',
+                        borderColor: '#2d2a26',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.parsed.y || '';
+                                    return label + ' navios (Aprox. ' + (label * 50) + ' homens)';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Navios'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
